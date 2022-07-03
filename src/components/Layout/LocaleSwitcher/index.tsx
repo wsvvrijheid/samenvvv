@@ -1,7 +1,28 @@
 import { Button, ButtonGroup, HStack } from '@chakra-ui/react'
+import { MDXRemoteSerializeResult } from 'next-mdx-remote'
+import { NextSeoProps } from 'next-seo'
 import { NextRouter, useRouter } from 'next/dist/client/router'
+import { DehydratedState } from 'react-query'
 
-import { DynamicProps } from 'pages/[...slug]'
+export interface DynamicProps {
+  locale: StrapiLocale
+  slugs: {
+    en: (string | null)[]
+    nl: (string | null)[]
+    tr: (string | null)[]
+  }
+  isPage: {
+    main: boolean
+    sub: boolean
+    child: boolean
+  }
+  source: MDXRemoteSerializeResult<Record<string, unknown>>
+  dehydratedState: DehydratedState
+  pageData: Hashtag | Post | Record<string, unknown>
+  _nextI18Next: any
+  seo: NextSeoProps
+  link: string
+}
 
 interface LocaleSwitcherProps {
   hasScroll?: boolean
@@ -26,20 +47,18 @@ export const LocaleSwitcher = ({
   const { locales, push, pathname, locale, asPath, components } =
     useRouter() as NextRouter & RouterComponent
 
-  const slug =
-    (components?.[pathname]?.props?.pageProps?.pageData?.slugs as any) ||
-    (components?.[pathname]?.props?.pageProps?.slug as any)
+  const slugs = components?.[pathname]?.props?.pageProps?.slugs as any
 
   // TODO: Redirect to localized path for static pages
-  const handleChangeLanguage = async (locale: CommonLocale) => {
-    await push(pathname, slug?.[locale]?.join('/') || asPath, { locale })
+  const handleChangeLanguage = async (locale: StrapiLocale) => {
+    await push(pathname, slugs?.[locale] || asPath, { locale })
   }
 
   return (
     <HStack py={1} justify="flex-end">
-      <ButtonGroup isAttached d="flex" size="xs" alignItems="center">
-        {(locales as CommonLocale[]).map(code => {
-          if (slug && (!slug?.[code] || !slug?.[code]?.[0])) return null
+      <ButtonGroup isAttached display="flex" size="xs" alignItems="center">
+        {(locales as StrapiLocale[]).map(code => {
+          if (slugs && (!slugs?.[code] || !slugs?.[code])) return null
 
           return (
             <Button

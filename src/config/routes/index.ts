@@ -1,124 +1,37 @@
 import ROUTES from './routes.json'
 
-const {
-  announcement,
-  // news,
-  // event,
-  // competition,
+export type RouteKeys = keyof typeof ROUTES | 'post'
+
+const { hashtag, foundation, about, contact, terms, privacy } = ROUTES
+
+export const HEADER_MENU: Array<ChildMenuType> = [
   hashtag,
-  blog,
-  // club,
   about,
   contact,
-  terms,
-  privacy,
-} = ROUTES
-
-export type ChildMenuType = { label: string; link: string }
-export type ParentMenuType = {
-  label: string
-  children: ChildMenuType[]
-}
-
-export type MenuType = ChildMenuType | ParentMenuType
-export type LocalizedMenuType = ILocalize<MenuType>
-
-export const HEADER_MENU: Array<LocalizedMenuType> = [
-  // {
-  //   en: {
-  //     label: 'Menu',
-  //     children: [announcement.en, news.en, event.en, competition.en],
-  //   },
-  //   nl: {
-  //     label: 'Menu',
-  //     children: [announcement.nl, news.nl, event.nl, competition.nl],
-  //   },
-  //   tr: {
-  //     label: 'Menü',
-  //     children: [announcement.tr, news.tr, event.tr, competition.tr],
-  //   },
-  // },
-  announcement,
-  hashtag,
-  blog,
-  {
-    en: {
-      label: 'Samenvvv',
-      children: [about.en, contact.en],
-    },
-    nl: {
-      label: 'Samenvvv',
-      children: [about.nl, contact.nl],
-    },
-    tr: {
-      label: 'Samenvvv',
-      children: [about.tr, contact.tr],
-    },
-  },
+  foundation,
 ]
 
-export const FOOTER_MENU: Array<ILocalize<ParentMenuType>> = [
-  {
-    en: {
-      label: 'Foundation',
-      children: [about.en, contact.en],
+export const FOOTER_MENU: Array<ChildMenuType & { children: ChildMenuType[] }> =
+  [
+    {
+      children: [foundation, about, contact],
+      link: '#',
+      en: foundation.en,
+      tr: foundation.tr,
+      nl: foundation.nl,
     },
-    nl: {
-      label: 'Stichting',
-      children: [about.nl, contact.nl],
+    {
+      children: [hashtag],
+      link: '#',
+      en: 'Menu',
+      nl: 'Menu',
+      tr: 'Menu',
     },
-    tr: {
-      label: 'Vakıf',
-      children: [about.tr, contact.tr],
+    {
+      children: [terms, privacy],
+      link: '#',
+      en: 'Support',
+      nl: 'Steun',
+      tr: 'Destek',
     },
-  },
-  {
-    en: {
-      label: 'Menu',
-      children: [
-        announcement.en,
-        // news.en,
-        // event.en,
-        // competition.en,
-        hashtag.en,
-        blog.en,
-      ],
-    },
-    nl: {
-      label: 'Menu',
-      children: [
-        announcement.nl,
-        // news.nl,
-        // event.nl,
-        // competition.nl,
-        hashtag.nl,
-        blog.nl,
-      ],
-    },
-    tr: {
-      label: 'Menu',
-      children: [
-        announcement.tr,
-        // news.tr,
-        // event.tr,
-        // competition.tr,
-        hashtag.tr,
-        blog.tr,
-      ],
-    },
-  },
-  {
-    en: {
-      label: 'Support',
-      children: [terms.en, privacy.en],
-    },
-    nl: {
-      label: 'Steun',
-      children: [terms.nl, privacy.nl],
-    },
-    tr: {
-      label: 'Destek',
-      children: [terms.tr, privacy.tr],
-    },
-  },
-]
+  ]

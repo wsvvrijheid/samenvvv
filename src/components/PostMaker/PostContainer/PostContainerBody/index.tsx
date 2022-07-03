@@ -1,21 +1,18 @@
-import { memo, useEffect } from 'react'
+import { FC, memo } from 'react'
 
 import { Box, Spacer, Stack } from '@chakra-ui/react'
 
 import { ChakraNextImage } from '@components'
-import { useGenerateRandomPostText } from '@hooks'
 
 import { PostContainerTags } from '../PostContainerTags'
 import { PostTextarea } from '../PostTextarea'
 
-export const PostContainerBody = memo<{ post: IHashtagPost }>(
-  function PostContainerBody({ post }) {
-    const generateRandomPostText = useGenerateRandomPostText()
+interface PostContainerBodyProp {
+  postImage?: string
+}
 
-    useEffect(() => {
-      generateRandomPostText(post)
-    }, [post])
-
+export const PostContainerBody: FC<PostContainerBodyProp> = memo(
+  function PostContainerBody({ postImage }) {
     return (
       <Stack
         flex={1}
@@ -30,18 +27,14 @@ export const PostContainerBody = memo<{ post: IHashtagPost }>(
         <PostTextarea />
         <PostContainerTags />
         <Spacer />
-        {post.image && (
+        {postImage && (
           <Box
             rounded="md"
             overflow="hidden"
             borderColor="gray.300"
             borderWidth={1}
           >
-            <ChakraNextImage
-              ratio="twitter"
-              h={'100%'}
-              image={post.image.url}
-            />
+            <ChakraNextImage ratio="twitter" h={'100%'} image={postImage} />
           </Box>
         )}
       </Stack>

@@ -49,7 +49,7 @@ export const ContactForm = (): JSX.Element => {
     isSuccess,
   } = useMutation<any, null, SendMailVariables>(
     formData => {
-      return axios.post(`${process.env.NEXT_PUBLIC_ADMIN_URL}/email`, formData)
+      return axios.post(`${process.env.NEXT_PUBLIC_API_URL}/email`, formData)
     },
     {
       onError: () => {
@@ -112,7 +112,7 @@ export const ContactForm = (): JSX.Element => {
         type="submit"
         isDisabled={!isValid}
         isLoading={isLoading}
-        isFullWidth
+        w="full"
       >
         {t`contact.form.button`}
       </Button>

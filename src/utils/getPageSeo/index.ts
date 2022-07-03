@@ -1,7 +1,7 @@
 import { NextSeoProps } from 'next-seo'
-import removeMarkdown from 'remove-markdown'
 
-import { getItemLink, truncateText } from '@utils'
+import { RouteKeys } from '@config'
+import { getItemLink } from '@utils'
 
 export const emptySeoObj = {
   title: '',
@@ -101,30 +101,19 @@ export const emptySeoObj = {
 }
 
 export const getPageSeo = (
-  data:
-    | IPage
-    | ISubpage
-    | IHashtag
-    | ICompetition
-    | IApplication
-    | IHashtagPost,
-  locale: CommonLocale,
+  data: Hashtag | Post,
+  locale: StrapiLocale,
+  type: RouteKeys,
 ): NextSeoProps => {
-  const url =
-    getItemLink(
-      data as IPage | ISubpage | IApplication | IHashtagPost,
-      locale,
-      true,
-    ) ?? ''
+  const url = getItemLink(data as Hashtag | Post, locale, type, true) ?? ''
 
-  const page = data as IPage
-  const post = data as IHashtagPost
+  const page = data as Hashtag
+  const post = data as Post
 
   const title = page.title ?? post.hashtag?.title ?? ''
-  const content = page.content ?? post.text ?? ''
-  const description = removeMarkdown(truncateText(content, 200))
+  const description = page.description ?? post.text ?? ''
   const image = data.image
-  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL as string
+  const adminUrl = process.env.NEXT_PUBLIC_API_URL as string
 
   return {
     title,

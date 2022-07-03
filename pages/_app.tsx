@@ -1,5 +1,5 @@
 /* eslint-disable import/no-unresolved */
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 
 import { ChakraProvider } from '@chakra-ui/react'
 import { appWithTranslation } from 'next-i18next'
@@ -22,13 +22,9 @@ import 'swiper/css/scrollbar'
 import 'swiper/css/effect-fade'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  const queryClientRef = useRef<QueryClient>()
+  const [queryClient] = useState(() => new QueryClient())
   const { locale } = useRouter()
   const router = useRouter()
-
-  if (!queryClientRef.current) {
-    queryClientRef.current = new QueryClient()
-  }
 
   useEffect(() => {
     const handleRouteChange = (url: URL) => {
@@ -41,11 +37,11 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   }, [router.events])
 
   return (
-    <QueryClientProvider client={queryClientRef.current}>
+    <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <ReduxProvider store={store}>
           <ChakraProvider theme={theme}>
-            <DefaultSeo {...getDefaultSeo(locale as CommonLocale)} />
+            <DefaultSeo {...getDefaultSeo(locale as StrapiLocale)} />
             <Component {...pageProps} />
           </ChakraProvider>
         </ReduxProvider>

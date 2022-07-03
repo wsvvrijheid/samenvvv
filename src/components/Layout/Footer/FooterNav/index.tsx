@@ -18,12 +18,12 @@ export const FooterNav = (): JSX.Element => {
             align={{ base: 'center', sm: 'start' }}
             marginX={4}
             fontSize="lg"
-            color={'teal.500'}
+            color={'primary.500'}
             key={i}
             py={4}
           >
-            <ListHeader>{t(item[locale as ILocale].label)}</ListHeader>
-            {item[locale as ILocale].children.map((item, i) => {
+            <ListHeader>{t(item[locale as StrapiLocale])}</ListHeader>
+            {item.children.map((item, i) => {
               return <FooterNavItem key={i} navItem={item} />
             })}
           </Stack>

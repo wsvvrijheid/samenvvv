@@ -1,5 +1,5 @@
 import {
-  Box,
+  Stack,
   Tag,
   // TagCloseButton,
   TagLabel,
@@ -17,9 +17,7 @@ import {
 } from '@store'
 
 export const PostContainerTrendTags = () => {
-  const { trendNames, defaultHashtags } = useAppSelector(
-    state => state.postShare,
-  )
+  const { trendNames, defaultHashtags } = useAppSelector(state => state.post)
 
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -35,9 +33,9 @@ export const PostContainerTrendTags = () => {
   if ([...defaultHashtags, ...trendNames].length === 0) return <></>
 
   return (
-    <Box mb={2}>
+    <Stack mb={2} spacing={1}>
       <Text color="gray.500" fontSize="sm">
-        {t`post-share.trends-label`}
+        {t`post.trends-label`}
       </Text>
       {defaultHashtags.length > 0 && (
         <Wrap>
@@ -56,6 +54,6 @@ export const PostContainerTrendTags = () => {
       {trendNames.length > 0 && (
         <TagList tags={trendNames} onClickButton={onRemoveTrend} />
       )}
-    </Box>
+    </Stack>
   )
 }

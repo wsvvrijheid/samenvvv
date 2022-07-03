@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { useEffect } from 'react'
 
 import {
   Box,
@@ -13,23 +13,51 @@ import {
   Stack,
 } from '@chakra-ui/react'
 import { useTour } from '@reactour/tour'
+import _ from 'lodash'
 import { useTranslation } from 'next-i18next'
 import { FaQuestionCircle } from 'react-icons/fa'
 
-import { togglePostModal, useAppDispatch, useAppSelector } from '@store'
+import { useGenerateRandomPostText } from '@hooks'
+import { useCurrentPost, useHashtag } from '@lib'
+import {
+  checkSharedPosts,
+  setRandomMentionUsername,
+  togglePostModal,
+  useAppDispatch,
+  useAppSelector,
+} from '@store'
 
 import { MentionAndTrends } from './MentionAndTrends'
 import { PostContainer } from './PostContainer'
 import { TweetWidget } from './TweetWidget'
 
-export const PostMaker = memo<{ post: IHashtagPost }>(function PostMaker({
-  post,
-}) {
-  const { isPostModalOpen } = useAppSelector(state => state.postShare)
+export const PostMaker = () => {
+  const { isPostModalOpen, sharedPosts } = useAppSelector(state => state.post)
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const generateRandomPostText = useGenerateRandomPostText()
+
+  const { data: hashtag } = useHashtag()
+  const currentPost = useCurrentPost()
 
   const { setIsOpen } = useTour()
+
+  useEffect(() => {
+    const sharedStorage = localStorage.getItem(hashtag?.slug as string)
+    if (sharedStorage) {
+      dispatch(checkSharedPosts())
+    }
+  }, [hashtag, dispatch])
+
+  useEffect(() => {
+    const randomMention = _.sample(hashtag?.mentions)
+    if (randomMention)
+      dispatch(setRandomMentionUsername(randomMention?.username))
+  }, [currentPost, hashtag?.mentions, dispatch])
+
+  useEffect(() => {
+    generateRandomPostText(currentPost)
+  }, [currentPost, generateRandomPostText])
 
   return (
     <>
@@ -43,7 +71,7 @@ export const PostMaker = memo<{ post: IHashtagPost }>(function PostMaker({
         leftIcon={<FaQuestionCircle />}
         onClick={() => setIsOpen(true)}
       >
-        {t`post-share.help`}
+        {t`post.help`}
       </Button>
       <IconButton
         display={{ base: 'flex', lg: 'none' }}
@@ -71,7 +99,7 @@ export const PostMaker = memo<{ post: IHashtagPost }>(function PostMaker({
         <ModalContent py={4} h="100vh" pos="relative">
           <DrawerCloseButton />
           <ModalBody as={Stack} w={{ base: 'full', lg: 300 }}>
-            <MentionAndTrends post={post} />
+            <MentionAndTrends />
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -82,16 +110,20 @@ export const PostMaker = memo<{ post: IHashtagPost }>(function PostMaker({
         alignItems="stretch"
       >
         <Box display={{ base: 'none', lg: 'block' }} h="inherit">
-          <MentionAndTrends post={post} />
+          <MentionAndTrends />
         </Box>
-        <PostContainer post={post} />
+        <PostContainer
+          post={currentPost}
+          sharedPosts={sharedPosts}
+          posts={hashtag?.posts}
+        />
         <Box>
           <TweetWidget
-            title={t`post-share.latest-tweets-label`}
-            tweets={post.hashtag?.tweets}
+            title={t`post.latest-tweets-label`}
+            tweets={hashtag?.tweets}
           />
         </Box>
       </Grid>
     </>
   )
-})
+}

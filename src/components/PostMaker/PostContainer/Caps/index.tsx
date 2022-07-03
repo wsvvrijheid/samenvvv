@@ -1,17 +1,24 @@
-import React, { memo } from 'react'
+import React, { FC, memo } from 'react'
 
 import { Box, Stack, Text } from '@chakra-ui/react'
 import { useTranslation } from 'next-i18next'
-import { useRouter } from 'next/router'
 
-import { getItemLink } from '@utils'
+import { useSetCurrentPost } from '@lib'
 
-import { ChakraNextImage } from '../../../Shared/ChakraNextImage'
-import { Navigate } from '../../../Shared/Navigate'
+import { CapsItem } from './CapsItem'
 
-export const Caps = memo<{ post: IHashtagPost }>(function Caps({ post }) {
-  const { locale } = useRouter()
+interface CapsListProps {
+  sharedPosts: number[]
+  posts?: Post[]
+}
+
+export const CapsList: FC<CapsListProps> = memo(function CapsList({
+  sharedPosts,
+  posts,
+}) {
   const { t } = useTranslation()
+
+  const setCurrentPost = useSetCurrentPost()
 
   return (
     <Box
@@ -29,7 +36,7 @@ export const Caps = memo<{ post: IHashtagPost }>(function Caps({ post }) {
         data-tour="step-other-posts"
         data-tour-mob="step-other-posts"
       >
-        <Text color="gray.500" fontSize="sm">{t`post-share.other-posts`}</Text>
+        <Text color="gray.500" fontSize="sm">{t`post.other-posts`}</Text>
         <Stack
           direction={{ base: 'row', lg: 'column' }}
           h="full"
@@ -37,25 +44,15 @@ export const Caps = memo<{ post: IHashtagPost }>(function Caps({ post }) {
           overflowY={{ base: 'hidden', lg: 'auto' }}
           overflowX={{ base: 'auto', lg: 'hidden' }}
         >
-          {post.posts?.slice(0, 15).map((p, i) => {
+          {posts?.slice(0, 15).map((post, i) => {
             return (
-              <Box
+              <CapsItem
                 key={i}
-                rounded="md"
-                shadow="primary"
-                overflow="hidden"
-                flexShrink={0}
-              >
-                <Navigate
-                  href={getItemLink(p, locale as CommonLocale) as string}
-                >
-                  <ChakraNextImage
-                    w={150}
-                    h={85}
-                    image={p.image?.url as string}
-                  />
-                </Navigate>
-              </Box>
+                image={post.image.url}
+                id={post.id}
+                isShared={sharedPosts.includes(post.id)}
+                onCapsClick={setCurrentPost}
+              />
             )
           })}
         </Stack>
